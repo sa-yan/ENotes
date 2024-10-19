@@ -1,6 +1,8 @@
 package com.sayan.enotes.controller;
 
 
+import com.sayan.enotes.dto.CategoryDto;
+import com.sayan.enotes.dto.CategoryResponseDto;
 import com.sayan.enotes.model.Category;
 import com.sayan.enotes.service.CategoryService;
 import jakarta.servlet.ServletRequest;
@@ -19,8 +21,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/save-category")
-    public ResponseEntity<String> saveCategory(@RequestBody Category category) {
-       Boolean isSaved = categoryService.saveCategory(category);
+    public ResponseEntity<String> saveCategory(@RequestBody CategoryDto categoryDto) {
+       Boolean isSaved = categoryService.saveCategory(categoryDto);
 
        if (isSaved) {
            return new ResponseEntity<>("SUCCESSFULLY SAVED!!", HttpStatus.CREATED);
@@ -30,8 +32,8 @@ public class CategoryController {
     }
 
     @GetMapping("/get-categories")
-    public ResponseEntity<List<Category>> getAllCategories(ServletRequest servletRequest) {
-        List<Category> categoryList = categoryService.getAllCategory();
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        List<CategoryDto> categoryList = categoryService.getAllCategory();
 
         return new ResponseEntity<>(categoryList, HttpStatus.OK);
     }
