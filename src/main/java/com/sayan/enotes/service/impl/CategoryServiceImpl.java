@@ -12,6 +12,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -40,10 +41,32 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAllCategory() {
-        List<Category> categoryList = repository.findAll();
+        List<Category> categoryList = repository.findByIsDeletedFalse();
 
         return categoryList.stream()
                 .map(cat -> modelMapper.map(cat, CategoryDto.class))
                 .toList();
+    }
+
+    @Override
+    public CategoryDto getCategoryById(Integer id) {
+        Optional<Category> findByCategory = repository.findByIdAndIsDeletedFalse(id);
+        if(findByCategory.isPresent()){
+            Category category = findByCategory.get();
+            return modelMapper.map(category, CategoryDto.class);
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean deleteCategoryById(Integer id) {
+        Optional<Category> findByCategory = repository.findById(id);
+        if(findByCategory.isPresent()){
+            Category category = findByCategory.get();
+            category.setIsDeleted(true);
+            repository.save(category);
+            return true;
+        }
+        return false;
     }
 }
