@@ -1,7 +1,6 @@
 package com.sayan.enotes.service.impl;
 
 import com.sayan.enotes.dto.CategoryDto;
-import com.sayan.enotes.dto.CategoryResponseDto;
 import com.sayan.enotes.model.Category;
 import com.sayan.enotes.repository.CategoryRepository;
 import com.sayan.enotes.service.CategoryService;
@@ -23,20 +22,32 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
-//        Category category = new Category();
-
-//        category.setName(categoryDto.getName());
-//        category.setDescription(categoryDto.getDescription());
-//        category.setIsActive(categoryDto.getIsActive());
 
         Category category = modelMapper.map(categoryDto, Category.class);
 
-        category.setIsDeleted(false);
-        category.setCreatedBy(1);
-        category.setCreatedAt(new Date());
+        if(ObjectUtils.isEmpty(category.getId())){
+            category.setIsDeleted(false);
+            category.setCreatedBy(1);
+            category.setCreatedAt(new Date());
+        }else{
+            updateCategory(category);
+        }
+
 
         Category savedCategory =  repository.save(category);
         return !ObjectUtils.isEmpty(savedCategory);
+    }
+
+    private void updateCategory(Category category) {
+        Optional<Category> findById = repository.findById(category.getId());
+        if(findById.isPresent()){
+            Category existCategory = findById.get();
+            category.setCreatedBy(existCategory.getCreatedBy());
+            category.setCreatedAt(existCategory.getCreatedAt());
+            category.setIsDeleted(existCategory.getIsDeleted());
+            category.setUpdatedBy(1);
+            category.setUpdatedAt(new Date());
+        }
     }
 
     @Override
@@ -69,4 +80,5 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return false;
     }
+
 }
