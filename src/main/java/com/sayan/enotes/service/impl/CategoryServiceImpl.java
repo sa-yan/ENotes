@@ -4,6 +4,7 @@ import com.sayan.enotes.dto.CategoryDto;
 import com.sayan.enotes.model.Category;
 import com.sayan.enotes.repository.CategoryRepository;
 import com.sayan.enotes.service.CategoryService;
+import com.sayan.enotes.util.Validation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository repository;
     private ModelMapper modelMapper;
+    private Validation validation;
 
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
+
+        //validation checking
+
+        validation.categoryValidation(categoryDto);
 
         Category category = modelMapper.map(categoryDto, Category.class);
 
